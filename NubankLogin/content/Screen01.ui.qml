@@ -19,6 +19,8 @@ Rectangle {
     Rectangle {
         color: "white"
         radius: 10
+        anchors.verticalCenterOffset: 0
+        anchors.horizontalCenterOffset: 0
 
         anchors {
             top: parent.top
@@ -49,33 +51,31 @@ Rectangle {
             text: "CPF"
             color: "#820ad1"
             font.pixelSize: 20
+            width: parent.width * 0.6
             anchors {
-                left: parent.left
+                left: textCpf.left
                 top: parent.top
                 topMargin: 160
-                leftMargin: 60
+                horizontalCenter: parent.horizontalCenter
             }
         }
 
         TextInput {
             id: textCpf
-            width: parent.width
-            height: 40
+            width: parent.width * 0.6
+            height: 25
 
             anchors {
                 top: labelCpf.bottom
-                left: labelCpf.left
-                right: parent.right
-                rightMargin: 40
-                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
             }
 
             Rectangle {
                 border.color: "red"
                 border.width: 0.5
+                height: 2
                 anchors {
-                    top: parent.top
-                    bottom: parent.bottom
+                    top: parent.bottom
                     left: parent.left
                     right: parent.right
                 }
@@ -87,33 +87,32 @@ Rectangle {
             text: "Senha"
             color: "#820ad1"
             font.pixelSize: 20
+            width: parent.width * 0.6
+
             anchors {
-                left: parent.left
+                left: textCpf.left
                 top: parent.top
                 topMargin: 260
-                leftMargin: 60
+                horizontalCenter: parent.horizontalCenter
             }
         }
 
         TextInput {
             id: textSenha
-            width: parent.width
-            height: 40
+            width: parent.width * 0.6
+            height: 25
 
             anchors {
                 top: labelSenha.bottom
-                left: labelSenha.left
-                right: parent.right
-                rightMargin: 40
-                topMargin: 10
+                horizontalCenter: parent.horizontalCenter
             }
 
             Rectangle {
                 border.color: "red"
                 border.width: 0.5
+                height: 2
                 anchors {
-                    top: parent.top
-                    bottom: parent.bottom
+                    top: parent.bottom
                     left: parent.left
                     right: parent.right
                 }
@@ -122,15 +121,15 @@ Rectangle {
 
         Button {
             id: buttonContinue
-            height: textSenha.height * 2
+            height: textSenha.height * 1.5
             flat: true
+            width: parent.width * 0.6
 
             anchors {
                 top: textSenha.bottom
                 topMargin: 60
+
                 horizontalCenter: parent.horizontalCenter
-                left: textSenha.left
-                right: textSenha.right
             }
 
             background: Rectangle {
