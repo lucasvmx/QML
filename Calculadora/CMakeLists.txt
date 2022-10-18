@@ -30,4 +30,5 @@ target_link_libraries(appCalculadora
 
 install(TARGETS appCalculadora
     BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    LIBRARY DESTINATION lib
+)

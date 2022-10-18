@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 
 Window {
     width: 640
@@ -13,8 +14,22 @@ Window {
         standardButtons: Dialog.Ok
         visible: false
         anchors.centerIn: parent
+        modal: true
+        font.pointSize: 12
 
-        onAccepted: console.log("Ok clicked")
+        Timer {
+            id: timer
+            interval: 3000
+            onTriggered: {
+                dialog.close()
+            }
+        }
+
+        onVisibleChanged: {
+            if(dialog.visible) {
+                timer.start()
+            }
+        }
     }
 
 
@@ -59,7 +74,7 @@ Window {
             anchors.top: parent.top
             width: parent.width
             height: parent.height * 0.3
-            font.pixelSize: textNumeros.height * 0.5
+            font.pixelSize: textNumeros.height * 0.2
             color: "blue"
             anchors.left: parent.left
             anchors.right: parent.right
