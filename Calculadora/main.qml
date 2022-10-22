@@ -3,19 +3,15 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Window {
-    width: 640
+    width: 320
     height: 480
     visible: true
     title: qsTr("Calculadora")
 
-    Dialog {
+    MyDialog {
         id: dialog
-        title: "Title"
-        standardButtons: Dialog.Ok
         visible: false
-        anchors.centerIn: parent
         modal: true
-        font.pointSize: 12
 
         Timer {
             id: timer
@@ -32,23 +28,61 @@ Window {
         }
     }
 
-
     Rectangle {
         id: frame
         color: "black"
         anchors.fill: parent
 
+        QtObject {
+            id: consts
+            property bool haveOperator: false
+        }
+
         ButtonGroup {
             buttons: grid.children
 
             onClicked: function(button) {
-                if(button.txt === "=") {
+
+                switch(button.txt)
+                {
+                case "x²":
+                    let num = parseInt(textNumeros.text, 10);
+                    textResult.text = `${num * num}`
+                    break;
+                case "=":
                     calculate(textNumeros.text);
-                } else if(button.txt === "C") {
-                    textNumeros.text = "";
-                } else {
+                    break;
+
+                case "\u00f7":
+                case "\u00d7":
+                case "-":
+                case "+":
+                    consts.haveOperator = true;
                     textNumeros.text += button.txt;
+                    break;
+
+                case "C":
+                    textNumeros.text = "";
+                    textResult.text = "";
+                    break;
+                default:
+                    textNumeros.text += button.txt;
+
+                    if(consts.haveOperator) {
+                        // efetua o cálculo
+                        calculate(textNumeros.text);
+                        consts.haveOperator = false;
+                    }
                 }
+            }
+
+            function sanitize(data) {
+                let s = String(data);
+
+                s = s.replace(/\u00d7/g, "*");
+                s = s.replace(/,/g, ".");
+                s = s.replace(/\u00f7/g, "/");
+                return s;
             }
 
             function calculate(data) {
@@ -57,42 +91,46 @@ Window {
                     return;
                 }
 
-                data = data.replace("\u00d7", "*");
-                data = data.replace(",", ".");
+                let sanitized = sanitize(data);
 
                 try {
-                    textNumeros.text = eval(data);
+                    textResult.text = eval(sanitized);
                 } catch(Exception) {
-                    dialog.title = "Expressão incorreta"
+                    dialog.msg = "Expressão incorreta localizada\ntente novamente mais tarde\nola mundo"
+                    dialog.dialogTitle = "Erro"
                     dialog.visible = true
+                    console.log("cant handle " + sanitized);
                 }
             }
         }
 
         TextInput {
             id: textNumeros
-            anchors.top: parent.top
             width: parent.width
-            height: parent.height * 0.3
-            font.pixelSize: textNumeros.height * 0.2
+            height: parent.height * 0.15
+            font.pointSize: textNumeros.height * 0.5
             color: "blue"
+            anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.leftMargin: grid.anchors.leftMargin
             anchors.rightMargin: grid.anchors.rightMargin
+            anchors.topMargin: 20
             cursorVisible: true
+            inputMethodHints: Qt.ImhDigitsOnly
+            horizontalAlignment: Qt.AlignRight
+            maximumLength: 6
+        }
 
-            Rectangle {
-                border.color: "blue"
-                border.width: 0.5
-                height: 2
-                focus: false
-                anchors {
-                    top: parent.bottom
-                    left: parent.left
-                    right: parent.right
-                }
-            }
+        Text {
+            id: textResult
+            anchors.top: textNumeros.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: parent.height * 0.15;
+            font.pointSize: textNumeros.height * 0.3
+            horizontalAlignment: Qt.AlignRight
+            color: "green"
         }
 
         Grid {
@@ -100,13 +138,14 @@ Window {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.top: textNumeros.bottom
+            anchors.top: textResult.bottom
             anchors.topMargin: 5
             anchors.leftMargin: 5
-            anchors.rightMargin: 8
-            height: parent.height * 0.8
+            anchors.rightMargin: 16
+            height: parent.height * 0.7
+            anchors.bottomMargin: 50
             columns: 4
-            rows: 4
+            rows: 5
             spacing: 8
 
             QtObject {
@@ -115,22 +154,27 @@ Window {
                 property double h: 0.20;
             }
 
-            MyCalculatorButton { txt:"7"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"8"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"9"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"\u00d7"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"4"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"5"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"6"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"-"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"1"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"2"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"3"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"+"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"0"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:","; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"C"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { txt:"="; backgroundColor: "green"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { id: calcButton; round: true; txt:"("; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:")"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"x²"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"\u00f7"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+
+            MyCalculatorButton { round: true; txt:"7"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"8"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"9"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"\u00d7"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"4"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"5"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"6"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"-"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"1"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"2"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"3"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"+"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"0"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:","; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"C"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"="; backgroundColor: "green"; width: parent.width * m.v; height: parent.height * m.h }
         }
     }
 }

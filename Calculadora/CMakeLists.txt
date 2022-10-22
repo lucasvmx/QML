@@ -14,7 +14,7 @@ qt_add_executable(appCalculadora
 qt_add_qml_module(appCalculadora
     URI Calculadora
     VERSION 1.0
-    QML_FILES main.qml MyCalculatorButton.qml
+    QML_FILES main.qml MyCalculatorButton.qml MyDialog.qml
 )
 
 set_target_properties(appCalculadora PROPERTIES

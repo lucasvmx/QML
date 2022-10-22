@@ -25,6 +25,6 @@ Button {
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         color: "white"
-        font.pointSize: 18
+        font.pointSize: 14
     }
 }
