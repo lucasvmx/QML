@@ -1,24 +1,34 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
-project(NubankLoginApp LANGUAGES CXX)
+project(NubankApp VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS Gui Qml Quick)
-qt_add_executable(NubankLoginApp src/main.cpp)
+find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
 
-qt_add_resources(NubankLoginApp "configuration"
-    PREFIX "/"
-    FILES
-        qtquickcontrols2.conf
+qt_add_executable(appNubank
+    main.cpp
 )
 
-target_link_libraries(NubankLoginApp PRIVATE
-    Qt${QT_VERSION_MAJOR}::Core
-    Qt${QT_VERSION_MAJOR}::Gui
-    Qt${QT_VERSION_MAJOR}::Quick
-    Qt${QT_VERSION_MAJOR}::Qml
+qt_add_qml_module(appNubank
+    URI NubankApp
+    VERSION 1.0
+    QML_FILES main.qml NubankLogin.qml NuButton.qml NuTextInput.qml
 )
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/qmlmodules)
+set_target_properties(appNubank PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+target_link_libraries(appNubank
+    PRIVATE Qt6::Quick)
+
+install(TARGETS appNubank
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION lib
+)

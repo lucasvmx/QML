@@ -24,7 +24,7 @@ Button {
         anchors.fill: parent
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        color: "white"
-        font.pointSize: 14
+        color: "#62a1ff"
+        font.pointSize: 20
     }
 }

@@ -3,8 +3,10 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 Window {
-    width: 320
-    height: 480
+    width: Qt.platform.os === "android" ? Screen.desktopAvailableWidth
+                                       : 320
+    height: Qt.platform.os === "android" ? Screen.desktopAvailableHeight
+                                         : 480
     visible: true
     title: qsTr("Calculadora")
 
@@ -62,6 +64,10 @@ Window {
                     break;
 
                 case "C":
+                    textNumeros.cursorPosition = textNumeros.cursorPosition - 1;
+                    textNumeros.remove(textNumeros.cursorPosition, textNumeros.cursorPosition+1)
+                    break;
+                case "AC":
                     textNumeros.text = "";
                     textResult.text = "";
                     break;
@@ -96,7 +102,7 @@ Window {
                 try {
                     textResult.text = eval(sanitized);
                 } catch(Exception) {
-                    dialog.msg = "Expressão incorreta localizada\ntente novamente mais tarde\nola mundo"
+                    dialog.msg = "Não foi possível interpretar a expressão"
                     dialog.dialogTitle = "Erro"
                     dialog.visible = true
                     console.log("cant handle " + sanitized);
@@ -119,7 +125,6 @@ Window {
             cursorVisible: true
             inputMethodHints: Qt.ImhDigitsOnly
             horizontalAlignment: Qt.AlignRight
-            maximumLength: 6
         }
 
         Text {
@@ -154,27 +159,33 @@ Window {
                 property double h: 0.20;
             }
 
-            MyCalculatorButton { id: calcButton; round: true; txt:"("; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:")"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"x²"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"\u00f7"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
+            QtObject {
+                id: colors
+                property string gray: "#1e1e1e"
+                property string blue: "#004fc4"
+            }
 
-            MyCalculatorButton { round: true; txt:"7"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"8"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"9"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"\u00d7"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"4"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"5"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"6"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"-"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"1"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"2"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"3"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"+"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"0"; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:","; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"C"; backgroundColor: "orange"; width: parent.width * m.v; height: parent.height * m.h }
-            MyCalculatorButton { round: true; txt:"="; backgroundColor: "green"; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { id: calcButton; round: true; txt:"AC"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"( )"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"%"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"\u00f7"; backgroundColor: colors.blue; width: parent.width * m.v; height: parent.height * m.h }
+
+            MyCalculatorButton { round: true; txt:"7"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"8"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"9"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"\u00d7"; backgroundColor: colors.blue; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"4"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"5"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"6"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"-"; backgroundColor: colors.blue; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"1"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"2"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"3"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"+"; backgroundColor: colors.blue; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"0"; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:","; backgroundColor: colors.gray; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"C"; backgroundColor: colors.blue; width: parent.width * m.v; height: parent.height * m.h }
+            MyCalculatorButton { round: true; txt:"="; backgroundColor: "blue"; width: parent.width * m.v; height: parent.height * m.h }
         }
     }
 }
